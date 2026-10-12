@@ -1,0 +1,29 @@
+name: seal-build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  pack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '4'
+      - name: Show toolchain
+        run: |
+          node --version
+          npm --version
+      - name: Pack
+        run: |
+          mkdir -p dist
+          npm pack
+          mv brace-expansion-*.tgz dist/
+          tar tzvf dist/brace-expansion-*.tgz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: brace-expansion-tgz
+          path: dist/brace-expansion-*.tgz
+          if-no-files-found: error
